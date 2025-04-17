@@ -234,14 +234,15 @@ wire[`ETH_FRAME_WIdTH-1:0]    eth_fifo_len_fifo_data;
     wire[`MII_DATA_WIDTH-1:0] ip_rx_frame_data;   
     wire[               31:0] ip_rx_tcp_rx_src_ip;
     wire[               15:0] ip_rx_tcp_rx_segment_len_b;
+    wire                      ip_rx_drop_segment;
+
     wire                      is_udp_datagram           = ip_rx_frame_type == 8'h11;
     wire                      ip_rx_udp_rx_datagram_vld = is_udp_datagram? ip_rx_new_frame  : 1'b0;
     wire[`MII_DATA_WIDTH-1:0] ip_rx_udp_rx_datagram     = is_udp_datagram? ip_rx_frame_data : 4'b0;
     wire[               31:0] ip_rx_udp_rx_src_ip       = is_udp_datagram? ip_rx_tcp_rx_src_ip : 32'b0;
+    wire                      ip_rx_udp_rx_drop_datagram= is_udp_datagram? ip_rx_drop_segment : 1'b0;
 
-    ip_rx #(
-        .FPGA_IP                    (                32'hC0A80106)
-    ) ip_rx0(
+    ip_rx  ip_rx0(
         .i_sys_clk                  (                   i_sys_clk),
         .i_rstn                     (                      i_rstn),
         .i_new_packet               (mac_rx_to_ip_rx_new_frame_en),
@@ -249,8 +250,9 @@ wire[`ETH_FRAME_WIdTH-1:0]    eth_fifo_len_fifo_data;
         .i_bad_packet_en            (mac_rx_to_ip_rx_bad_frame_en),
         .i_bad_packet               (   mac_rx_to_ip_rx_bad_frame),
         .i_tcp_drop                 (1'b0),
-        .i_udp_drop                   (udp_rx_ip_rx_drop_datagram),
+        .i_udp_drop                 (  udp_rx_ip_rx_drop_datagram),
         .o_drop_packet              (            ip_rx_drop_frame),
+        .o_drop_segment             (          ip_rx_drop_segment),
         .o_ip_rx_busy               (            ip_rx_ip_rx_busy),          
         .o_new_segment              (             ip_rx_new_frame),
         .o_segment_type             (            ip_rx_frame_type),         // protocol_type_latch, 8'h01 => icmp, 8'h06 => tcp, 8'h11 => udp
@@ -272,6 +274,7 @@ wire[`ETH_FRAME_WIdTH-1:0]    eth_fifo_len_fifo_data;
         .i_rstn                     (                   i_rstn),
         .i_datagram_vld             ( ip_rx_udp_rx_datagram_vld),
         .i_datagram                 (     ip_rx_udp_rx_datagram),
+        .i_drop_datagram            (ip_rx_udp_rx_drop_datagram),
         .i_src_ip                   (       ip_rx_udp_rx_src_ip),
         .o_data_vld                 (       udp_rx_fix_data_vld),
         .o_drop_datagram            (udp_rx_ip_rx_drop_datagram),

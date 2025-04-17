@@ -7,9 +7,7 @@ $Description :  Exchanges deliberately keep packet sizes smaller than the IP pac
 
 ******************************************************************************************************************************************************************/
 
-module ip_rx #(
-    parameter FPGA_IP    = 32'hC0A80106
-)(
+module ip_rx (
     input wire                       i_sys_clk,
     input wire                       i_rstn,
 
@@ -26,6 +24,7 @@ module ip_rx #(
     output wire                      o_ip_rx_busy,
 
     output reg                       o_new_segment,
+    output wire                      o_drop_segment,
     output reg[               31:0]  o_src_ip,
     output reg[               15:0]  o_segment_len_b,
     output reg[                7:0]  o_segment_type,                          // protocol_type_latch, 8'h01 => icmp, 8'h06 => tcp, 8'h11 => udp
@@ -94,14 +93,15 @@ module ip_rx #(
     assign o_ip_rx_busy = CUR_STAGE != IDLE_STAGE;
 
     assign o_drop_packet = (rx_cnt > 14'd39) && ((ip_ver_latch != 4'b0100) || (ihl_latch != 4'b0101) || (flag_latch != 3'b010) || (protocol_latch == TYPE_ICMP) ||
-                           (frag_offset_latch != 13'b0) || (dst_ip_latch != FPGA_IP) || check_failed);      // drop the packet if: 
+                           (frag_offset_latch != 13'b0) || (dst_ip_latch != `FPGA_IP) || check_failed);     // drop the packet if: 
                                                                                                             // - not IPV4 packet / 
                                                                                                             // - have options or padding
                                                                                                             // - fragment packet / 
                                                                                                             // - ICMP packet / 
                                                                                                             // - IP is not FPGA address / 
                                                                                                             // - Checksum failed / 
-    
+    assign o_drop_segment = i_bad_packet_en && i_bad_packet && (CUR_STAGE == TRANS_STAGE);
+
     wire header_done = (rx_cnt == 14'd39) && (~check_failed); 
     wire trans_drop  = i_udp_drop || i_tcp_drop;
 

@@ -10,6 +10,7 @@ module udp_rx (
     input wire                          i_rstn,
     input wire                          i_datagram_vld,
     input wire[`MII_DATA_WIDTH-1:0]     i_datagram,
+    input wire                          i_drop_datagram,
     input wire[               31:0]     i_src_ip,
     
     output reg                          o_data_vld,
@@ -39,7 +40,7 @@ module udp_rx (
     end 
 
     always @(*) begin 
-        if (~i_rstn) begin 
+        if (~i_rstn || i_drop_datagram) begin 
             NXT_STAGE = IDLE_STAGE;
         end 
         else begin 
@@ -92,6 +93,13 @@ module udp_rx (
         end 
         else begin 
             rx_cnt <= rx_cnt + 12'b1;
+            if (((rx_cnt == 12'hE) && ~header_check_done) || i_drop_datagram) begin 
+                o_drop_datagram <= 1'b1;
+            end 
+            else if ((rx_cnt > 12'hE) && header_check_done) begin 
+                o_data_vld    <= 1'b1;
+                o_data        <= i_datagram;
+            end 
             case (rx_cnt)
                 12'h0, 12'h1, 12'h2, 12'h3: begin 
                     src_port_latch <= (src_port_latch << 4) | {12'b0, i_datagram};
@@ -100,13 +108,6 @@ module udp_rx (
                     dst_port_latch <= (dst_port_latch << 4) | {12'b0, i_datagram};
                 end 
                 default: begin 
-                    if ((rx_cnt == 12'hE) && ~header_check_done) begin 
-                        o_drop_datagram <= 1'b1;
-                    end 
-                    if ((rx_cnt > 12'hE) && header_check_done) begin 
-                        o_data_vld    <= 1'b1;
-                        o_data        <= i_datagram;
-                    end 
                 end
             endcase 
         end 
