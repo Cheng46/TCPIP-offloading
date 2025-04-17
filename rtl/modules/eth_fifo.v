@@ -22,10 +22,7 @@ module eth_fifo (
     input wire[         `MII_DATA_WIDTH-1:0]   i_data_fifo_data,
 
     input wire                                i_data_fifo_r_en,
-<<<<<<< HEAD
-=======
     input wire                                i_data_fifo_r_stop,
->>>>>>> 51757a0 (WIP: save changes before rebase)
     input wire[$clog2(`DATA_FIFO_DEPTH)-1:0]  i_data_fifo_r_line,           // i_data_fifo_r_end_line
 
     // len queue fifo input
@@ -58,10 +55,7 @@ module eth_fifo (
         .i_fifo_w_en             (  i_data_fifo_w_en),
         .i_data                  (  i_data_fifo_data),
         .i_fifo_r_en             (  i_data_fifo_r_en),
-<<<<<<< HEAD
-=======
         .i_fifo_r_stop           (i_data_fifo_r_stop),
->>>>>>> 51757a0 (WIP: save changes before rebase)
         .i_fifo_r_len            (i_data_fifo_r_line),
         .o_fifo_r_done           (o_data_fifo_r_done),
         .o_fifo_empty            ( o_data_fifo_empty),     
@@ -80,10 +74,7 @@ module eth_fifo (
         .i_fifo_w_en             (  i_len_fifo_w_en),
         .i_data                  (  i_len_fifo_data),
         .i_fifo_r_en             (  i_len_fifo_r_en),
-<<<<<<< HEAD
-=======
         .i_fifo_r_stop           (             1'b0),
->>>>>>> 51757a0 (WIP: save changes before rebase)
         .i_fifo_r_len            (i_len_fifo_r_line),
         .o_fifo_r_done           (o_len_fifo_r_done),
         .o_fifo_empty            ( o_len_fifo_empty),     

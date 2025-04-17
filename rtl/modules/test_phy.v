@@ -53,15 +53,9 @@ module test_phy(
         end 
         else if (frame_done < 3'b100) begin
             if (frame_done == 3'b000) begin
-<<<<<<< HEAD
-                if(rx_index == 32'h000000E4) begin 
-                    o_mii_rx_dv   <= 1'b0;
-                    o_mii_rx_data <= 0;
-=======
                 if(rx_index == 32'h000000B2) begin 
                     o_mii_rx_dv   <= 1'b0;
                     o_mii_rx_data <= frame0[rx_index];
->>>>>>> 51757a0 (WIP: save changes before rebase)
                     rx_index      <= 0;
                     frame_done    <= frame_done + 1;
                 end
@@ -72,11 +66,7 @@ module test_phy(
                 end 
             end 
             else if (frame_done == 3'b001) begin
-<<<<<<< HEAD
-                if (rx_index == 32'h000000EE) begin 
-=======
                 if (rx_index == 32'h000000B0) begin 
->>>>>>> 51757a0 (WIP: save changes before rebase)
                     o_mii_rx_dv   <= 1'b0;
                     o_mii_rx_data <= 0;
                     rx_index      <= 0;
@@ -89,11 +79,7 @@ module test_phy(
                 end
             end 
             else if (frame_done == 3'b010) begin
-<<<<<<< HEAD
-                if (rx_index == 32'h000000EC) begin 
-=======
                 if (rx_index == 32'h000000B0) begin 
->>>>>>> 51757a0 (WIP: save changes before rebase)
                     o_mii_rx_dv   <= 1'b0;
                     o_mii_rx_data <= 0;
                     rx_index      <= 0;
@@ -106,11 +92,7 @@ module test_phy(
                 end 
             end
             else if (frame_done == 3'b011) begin
-<<<<<<< HEAD
-                if (rx_index == 32'h000000E4) begin 
-=======
                 if (rx_index == 32'h000000AE) begin 
->>>>>>> 51757a0 (WIP: save changes before rebase)
                     o_mii_rx_dv   <= 1'b0;
                     o_mii_rx_data <= 0;
                     rx_index      <= 0;
