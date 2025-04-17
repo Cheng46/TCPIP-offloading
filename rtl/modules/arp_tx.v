@@ -12,11 +12,7 @@ module arp_tx #(
     input wire                          i_lookup_en,
     input wire[               31:0]     i_lookup_ip,
 
-<<<<<<< HEAD
-    input wire                          i_rx_new_frame,
-=======
     input wire                          i_rx_new_packet,
->>>>>>> 51757a0 (WIP: save changes before rebase)
     input wire                          i_need_reply,
     input wire[               31:0]     i_receive_ip,
     input wire[               47:0]     i_receive_mac,
@@ -25,13 +21,8 @@ module arp_tx #(
     output reg                          o_lookup_result,         // success = 1, failed = 0
     output reg[               47:0]     o_lookup_mac,
 
-<<<<<<< HEAD
-    output reg                          o_arp_frame_en,
-    output reg[`MII_DATA_WIDTH-1:0]     o_arp_frame_data,
-=======
     output reg                          o_arp_packet_en,
     output reg[`MII_DATA_WIDTH-1:0]     o_arp_packet_data,
->>>>>>> 51757a0 (WIP: save changes before rebase)
     output wire                         o_arp_tx_busy
 );
 
@@ -89,11 +80,7 @@ module arp_tx #(
                     if (i_lookup_en) begin 
                         NXT_STAGE <= LOOKUP_STAGE;
                     end
-<<<<<<< HEAD
-                    else if (i_rx_new_frame && i_need_reply) begin 
-=======
                     else if (i_rx_new_packet && i_need_reply) begin 
->>>>>>> 51757a0 (WIP: save changes before rebase)
                         NXT_STAGE <= SEND_STAGE;
                     end 
                     else begin 
@@ -143,11 +130,7 @@ module arp_tx #(
     // ARP Cache
     reg         mac_unkwown;
     reg[31:0]   lookup_ip_latch;
-<<<<<<< HEAD
-    wire        arp_cache_w_en = i_rx_new_frame && ((i_receive_ip != ROUTER_IP) || (i_receive_mac != ROUTER_MAC));      // only write back to arp cache only 
-=======
     wire        arp_cache_w_en = i_rx_new_packet && ((i_receive_ip != ROUTER_IP) || (i_receive_mac != ROUTER_MAC));      // only write back to arp cache only 
->>>>>>> 51757a0 (WIP: save changes before rebase)
                                                                                                                         // when it's not router's address or 
                                                                                                                         // router has new address, which is 
                                                                                                                         // not an usual situation
@@ -183,11 +166,7 @@ module arp_tx #(
     );
 
     // ==============================================================================
-<<<<<<< HEAD
-    // Send ARP frame
-=======
     // Send ARP packet
->>>>>>> 51757a0 (WIP: save changes before rebase)
     // We will send an ARP request
 
     reg[ 5:0]  arp_send_cnt;
@@ -196,178 +175,13 @@ module arp_tx #(
     always @(posedge i_sys_clk or negedge i_rstn) begin 
         if (~i_rstn) begin 
             arp_send_cnt        <= 6'b0;
-<<<<<<< HEAD
-            o_arp_frame_en      <= 1'b1;
-            o_arp_frame_data    <= 4'b0;
-=======
             o_arp_packet_en      <= 1'b1;
             o_arp_packet_data    <= 4'b0;
->>>>>>> 51757a0 (WIP: save changes before rebase)
             arp_send_done       <= 1'b0;
             mac_unkwown         <= 1'b1;
         end 
         else if (arp_send_done) begin 
             arp_send_cnt        <= 6'b0;
-<<<<<<< HEAD
-            o_arp_frame_en      <= 1'b1;
-            o_arp_frame_data    <= 4'b0;
-            arp_send_done       <= 1'b0;
-            mac_unkwown         <= 1'b0;
-        end 
-        else if (mac_unkwown) begin                            // Send ARP Request frame
-            arp_send_cnt   <= arp_send_cnt + 6'b1;
-            o_arp_frame_en <= 1'b1;
-            case (arp_send_cnt)
-                6'd0, 6'd1, 6'd2: begin        	               // Hardware type -- ETH (0x01)
-                    o_arp_frame_data <= 4'b0;
-                end 
-                6'd3: begin                                    // Hardware type -- ETH (0x01)
-                    o_arp_frame_data <= 4'b1; 
-                end  
-                6'd4, 6'd6, 6'd7: begin                        // Protocol type -- IPV4 (0x0800)
-                    o_arp_frame_data <= 4'b0;
-                end 
-                6'd5: begin                                    // Protocol type -- IPV4 (0x0800)
-                    o_arp_frame_data <= 4'b1000; 
-                end     
-                6'd8: begin                                    // Hardware Address length in bytes -- 6
-                    o_arp_frame_data <= 4'b0;
-                end 
-                6'd9: begin                                    // Hardware Address length in bytes -- 6
-                    o_arp_frame_data <= 4'b0110;
-                end           
-                6'd10: begin                                   // IP Address length in bytes -- 4
-                    o_arp_frame_data <= 4'b0;
-                end 
-                6'd11: begin                                   // IP Address length in bytes -- 64
-                    o_arp_frame_data <= 4'b0100;
-                end           
-                6'd12, 6'd13, 6'd14: begin                     // Operation Code -- Request (1)
-                    o_arp_frame_data <= 4'b0;
-                end 
-                6'd15: begin                                   // Operation Code -- Request (1)
-                    o_arp_frame_data <= 4'b0001; 
-                end     
-                6'd16: begin                                   // Src MAC -- FPGA MAC
-                    o_arp_frame_data <= FPGA_MAC[47:44];
-                end 
-                6'd17: begin                                   // Src MAC -- FPGA MAC
-                    o_arp_frame_data <= FPGA_MAC[43:40];
-                end 
-                6'd18: begin                                   // Src MAC -- FPGA MAC
-                    o_arp_frame_data <= FPGA_MAC[39:36];
-                end 
-                6'd19: begin                                   // Src MAC -- FPGA MAC
-                    o_arp_frame_data <= FPGA_MAC[35:32];
-                end 
-                6'd20: begin                                   // Src MAC -- FPGA MAC
-                    o_arp_frame_data <= FPGA_MAC[31:28];
-                end 
-                6'd21: begin                                   // Src MAC -- FPGA MAC
-                    o_arp_frame_data <= FPGA_MAC[27:24];
-                end 
-                6'd22: begin                                   // Src MAC -- FPGA MAC
-                    o_arp_frame_data <= FPGA_MAC[23:20];
-                end 
-                6'd23: begin                                   // Src MAC -- FPGA MAC
-                    o_arp_frame_data <= FPGA_MAC[19:16];
-                end 
-                6'd24: begin                                   // Src MAC -- FPGA MAC
-                    o_arp_frame_data <= FPGA_MAC[15:12];
-                end 
-                6'd25: begin                                   // Src MAC -- FPGA MAC
-                    o_arp_frame_data <= FPGA_MAC[11:8];
-                end 
-                6'd26: begin                                   // Src MAC -- FPGA MAC
-                    o_arp_frame_data <= FPGA_MAC[7:4];
-                end 
-                6'd27: begin                                   // Src MAC -- FPGA MAC
-                    o_arp_frame_data <= FPGA_MAC[3:0];
-                end 
-                6'd28: begin                                   // Sender IP Address byte -- FPGA IP
-                    o_arp_frame_data <= FPGA_IP[31:28];
-                end 
-                6'd29: begin                                   // Sender IP Address byte -- FPGA IP
-                    o_arp_frame_data <= FPGA_IP[27:24];
-                end 
-                6'd30: begin                                   // Sender IP Address byte -- FPGA IP
-                    o_arp_frame_data <= FPGA_IP[23:20];
-                end 
-                6'd31: begin                                   // Sender IP Address byte -- FPGA IP
-                    o_arp_frame_data <= FPGA_IP[19:16];
-                end 
-                6'd32: begin                                   // Sender IP Address byte -- FPGA IP
-                    o_arp_frame_data <= FPGA_IP[15:12];
-                end 
-                6'd33: begin                                   // Sender IP Address byte -- FPGA IP
-                    o_arp_frame_data <= FPGA_IP[11:8];
-                end 
-                6'd34: begin                                   // Sender IP Address byte -- FPGA IP
-                    o_arp_frame_data <= FPGA_IP[7:4];
-                end 
-                6'd35: begin                                   // Sender IP Address byte -- FPGA IP
-                    o_arp_frame_data <= FPGA_IP[3:0];
-                end 
-                6'd36: begin                                   // Dst MAC -- need to be 48'b0
-                    o_arp_frame_data <= 4'b0;
-                end 
-                6'd37: begin                                   // Dst MAC -- need to be 48'b0
-                    o_arp_frame_data <= 4'b0;
-                end 
-                6'd38: begin                                   // Dst MAC -- need to be 48'b0
-                    o_arp_frame_data <= 4'b0;
-                end 
-                6'd39: begin                                   // Dst MAC -- need to be 48'b0
-                    o_arp_frame_data <= 4'b0;
-                end 
-                6'd40: begin                                   // Dst MAC -- need to be 48'b0
-                    o_arp_frame_data <= 4'b0;
-                end 
-                6'd41: begin                                   // Dst MAC -- need to be 48'b0
-                    o_arp_frame_data <= 4'b0;
-                end 
-                6'd42: begin                                   // Dst MAC -- need to be 48'b0
-                    o_arp_frame_data <= 4'b0;
-                end 
-                6'd43: begin                                   // Dst MAC -- need to be 48'b0
-                    o_arp_frame_data <= 4'b0;
-                end 
-                6'd44: begin                                   // Dst MAC -- need to be 48'b0
-                    o_arp_frame_data <= 4'b0;
-                end 
-                6'd45: begin                                   // Dst MAC -- need to be 48'b0
-                    o_arp_frame_data <= 4'b0;
-                end 
-                6'd46: begin                                   // Dst MAC -- need to be 48'b0
-                    o_arp_frame_data <= 4'b0;
-                end 
-                6'd47: begin                                   // Dst MAC -- need to be 48'b0
-                    o_arp_frame_data <= 4'b0;
-                end 
-                6'd48: begin                                   // Dst IP Address byte -- from IP
-                    o_arp_frame_data <= lookup_ip_latch[31:28];
-                end 
-                6'd49: begin                                   // Dst IP Address byte -- from IP
-                    o_arp_frame_data <= lookup_ip_latch[27:24];
-                end 
-                6'd50: begin                                   // Dst IP Address byte -- from IP
-                    o_arp_frame_data <= lookup_ip_latch[23:20];
-                end 
-                6'd51: begin                                   // Dst IP Address byte -- from IP
-                    o_arp_frame_data <= lookup_ip_latch[19:16];
-                end 
-                6'd52: begin                                   // Dst IP Address byte -- from IP
-                    o_arp_frame_data <= lookup_ip_latch[15:12];
-                end 
-                6'd53: begin                                   // Dst IP Address byte -- from IP
-                    o_arp_frame_data <= lookup_ip_latch[11:8];
-                end 
-                6'd54: begin                                   // Dst IP Address byte -- from IP
-                    o_arp_frame_data <= lookup_ip_latch[7:4];
-                end 
-                6'd55: begin                                   // Dst IP Address byte -- from IP
-                    o_arp_frame_data <= lookup_ip_latch[3:0];
-=======
             o_arp_packet_en      <= 1'b1;
             o_arp_packet_data    <= 4'b0;
             arp_send_done       <= 1'b0;
@@ -526,168 +340,12 @@ module arp_tx #(
                 end 
                 6'd55: begin                                   // Dst IP Address byte -- from IP
                     o_arp_packet_data <= lookup_ip_latch[3:0];
->>>>>>> 51757a0 (WIP: save changes before rebase)
                     arp_send_done    <= 1'b1;
                 end 
                 default: begin
                 end
             endcase
         end 
-<<<<<<< HEAD
-        else if (i_need_reply) begin                           // Send ARP Reply frame
-            arp_send_cnt   <= arp_send_cnt + 6'b1;
-            o_arp_frame_en <= 1'b1;
-            case (arp_send_cnt)
-                6'd0, 6'd1, 6'd2: begin        	               // Hardware type -- ETH (0x01)
-                    o_arp_frame_data <= 4'b0;
-                end 
-                6'd3: begin                                    // Hardware type -- ETH (0x01)
-                    o_arp_frame_data <= 4'b1; 
-                end  
-                6'd4, 6'd6, 6'd7: begin                        // Protocol type -- IPV4 (0x0800)
-                    o_arp_frame_data <= 4'b0;
-                end 
-                6'd5: begin                                    // Protocol type -- IPV4 (0x0800)
-                    o_arp_frame_data <= 4'b1000; 
-                end     
-                6'd8: begin                                    // Hardware Address length in bytes -- 6
-                    o_arp_frame_data <= 4'b0;
-                end 
-                6'd9: begin                                    // Hardware Address length in bytes -- 6
-                    o_arp_frame_data <= 4'b0110;
-                end           
-                6'd10: begin                                   // IP Address length in bytes -- 4
-                    o_arp_frame_data <= 4'b0;
-                end 
-                6'd11: begin                                   // IP Address length in bytes -- 64
-                    o_arp_frame_data <= 4'b0100;
-                end           
-                6'd12, 6'd13, 6'd14: begin                     // Operation Code -- Reply (2)
-                    o_arp_frame_data <= 4'b0;
-                end 
-                6'd15: begin                                   // Operation Code -- Reply (2)
-                    o_arp_frame_data <= 4'b0010; 
-                end     
-                6'd16: begin                                   // Src MAC -- FPGA MAC
-                    o_arp_frame_data <= FPGA_MAC[47:44];
-                end 
-                6'd17: begin                                   // Src MAC -- FPGA MAC
-                    o_arp_frame_data <= FPGA_MAC[43:40];
-                end 
-                6'd18: begin                                   // Src MAC -- FPGA MAC
-                    o_arp_frame_data <= FPGA_MAC[39:36];
-                end 
-                6'd19: begin                                   // Src MAC -- FPGA MAC
-                    o_arp_frame_data <= FPGA_MAC[35:32];
-                end 
-                6'd20: begin                                   // Src MAC -- FPGA MAC
-                    o_arp_frame_data <= FPGA_MAC[31:28];
-                end 
-                6'd21: begin                                   // Src MAC -- FPGA MAC
-                    o_arp_frame_data <= FPGA_MAC[27:24];
-                end 
-                6'd22: begin                                   // Src MAC -- FPGA MAC
-                    o_arp_frame_data <= FPGA_MAC[23:20];
-                end 
-                6'd23: begin                                   // Src MAC -- FPGA MAC
-                    o_arp_frame_data <= FPGA_MAC[19:16];
-                end 
-                6'd24: begin                                   // Src MAC -- FPGA MAC
-                    o_arp_frame_data <= FPGA_MAC[15:12];
-                end 
-                6'd25: begin                                   // Src MAC -- FPGA MAC
-                    o_arp_frame_data <= FPGA_MAC[11:8];
-                end 
-                6'd26: begin                                   // Src MAC -- FPGA MAC
-                    o_arp_frame_data <= FPGA_MAC[7:4];
-                end 
-                6'd27: begin                                   // Src MAC -- FPGA MAC
-                    o_arp_frame_data <= FPGA_MAC[3:0];
-                end 
-                6'd28: begin                                   // Sender IP Address byte -- FPGA IP
-                    o_arp_frame_data <= FPGA_IP[31:28];
-                end 
-                6'd29: begin                                   // Sender IP Address byte -- FPGA IP
-                    o_arp_frame_data <= FPGA_IP[27:24];
-                end 
-                6'd30: begin                                   // Sender IP Address byte -- FPGA IP
-                    o_arp_frame_data <= FPGA_IP[23:20];
-                end 
-                6'd31: begin                                   // Sender IP Address byte -- FPGA IP
-                    o_arp_frame_data <= FPGA_IP[19:16];
-                end 
-                6'd32: begin                                   // Sender IP Address byte -- FPGA IP
-                    o_arp_frame_data <= FPGA_IP[15:12];
-                end 
-                6'd33: begin                                   // Sender IP Address byte -- FPGA IP
-                    o_arp_frame_data <= FPGA_IP[11:8];
-                end 
-                6'd34: begin                                   // Sender IP Address byte -- FPGA IP
-                    o_arp_frame_data <= FPGA_IP[7:4];
-                end 
-                6'd35: begin                                   // Sender IP Address byte -- FPGA IP
-                    o_arp_frame_data <= FPGA_IP[3:0];
-                end 
-                6'd36: begin                                   // Dst MAC -- source MAC of last ARP frame
-                    o_arp_frame_data <= src_mac_latch[47:44];
-                end 
-                6'd37: begin                                   // Dst MAC -- source MAC of last ARP frame
-                    o_arp_frame_data <= src_mac_latch[43:40];
-                end 
-                6'd38: begin                                   // Dst MAC -- source MAC of last ARP frame
-                    o_arp_frame_data <= src_mac_latch[39:36];
-                end 
-                6'd39: begin                                   // Dst MAC -- source MAC of last ARP frame
-                    o_arp_frame_data <= src_mac_latch[35:32];
-                end 
-                6'd40: begin                                   // Dst MAC -- source MAC of last ARP frame
-                    o_arp_frame_data <= src_mac_latch[31:28];
-                end 
-                6'd41: begin                                   // Dst MAC -- source MAC of last ARP frame
-                    o_arp_frame_data <= src_mac_latch[27:24];
-                end 
-                6'd42: begin                                   // Dst MAC -- source MAC of last ARP frame
-                    o_arp_frame_data <= src_mac_latch[23:20];
-                end 
-                6'd43: begin                                   // Dst MAC -- source MAC of last ARP frame
-                    o_arp_frame_data <= src_mac_latch[19:16];
-                end 
-                6'd44: begin                                   // Dst MAC -- source MAC of last ARP frame
-                    o_arp_frame_data <= src_mac_latch[15:12];
-                end 
-                6'd45: begin                                   // Dst MAC -- source MAC of last ARP frame
-                    o_arp_frame_data <= src_mac_latch[11:8];
-                end 
-                6'd46: begin                                   // Dst MAC -- source MAC of last ARP frame
-                    o_arp_frame_data <= src_mac_latch[7:4];
-                end 
-                6'd47: begin                                   // Dst MAC -- source MAC of last ARP frame
-                    o_arp_frame_data <= src_mac_latch[3:0];
-                end 
-                6'd48: begin                                   // Dst IP Address byte -- source IP of last ARP frame
-                    o_arp_frame_data <= src_ip_latch[31:28];
-                end 
-                6'd49: begin                                   // Dst IP Address byte -- source IP of last ARP frame
-                    o_arp_frame_data <= src_ip_latch[27:24];
-                end 
-                6'd50: begin                                   // Dst IP Address byte -- source IP of last ARP frame
-                    o_arp_frame_data <= src_ip_latch[23:20];
-                end 
-                6'd51: begin                                   // Dst IP Address byte -- source IP of last ARP frame
-                    o_arp_frame_data <= src_ip_latch[19:16];
-                end 
-                6'd52: begin                                   // Dst IP Address byte -- source IP of last ARP frame
-                    o_arp_frame_data <= src_ip_latch[15:12];
-                end 
-                6'd53: begin                                   // Dst IP Address byte -- source IP of last ARP frame
-                    o_arp_frame_data <= src_ip_latch[11:8];
-                end 
-                6'd54: begin                                   // Dst IP Address byte -- source IP of last ARP frame
-                    o_arp_frame_data <= src_ip_latch[7:4];
-                end 
-                6'd55: begin                                   // Dst IP Address byte -- source IP of last ARP frame
-                    o_arp_frame_data <= src_ip_latch[3:0];
-=======
         else if (i_need_reply) begin                           // Send ARP Reply packet
             arp_send_cnt   <= arp_send_cnt + 6'b1;
             o_arp_packet_en <= 1'b1;
@@ -841,7 +499,6 @@ module arp_tx #(
                 end 
                 6'd55: begin                                   // Dst IP Address byte -- source IP of last ARP packet
                     o_arp_packet_data <= src_ip_latch[3:0];
->>>>>>> 51757a0 (WIP: save changes before rebase)
                     arp_send_done    <= 1'b1;
                 end 
                 default: begin
