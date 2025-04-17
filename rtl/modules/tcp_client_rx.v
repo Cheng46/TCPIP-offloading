@@ -9,7 +9,7 @@ module tcp_client_rx #(
     parameter FPGA_IP     = 32'hC0A80100,
     parameter FPGA_PORT   = 16'h5487
     parameter TWSE_IP     = 32'hEA006464,
-    parameter TWSE_PORT   = 16'h2714,         // port 10004
+    parameter TWSE_PORT   = 16'h2714,         // tcp port 10004
 )(
     input wire                          i_sys_clk,
     input wire                          i_rstn,
@@ -176,7 +176,7 @@ module tcp_client_rx #(
             o_data            <= 4'b0;
             rx_cnt            <= 12'b0;
         end 
-        else if (CHECK_STAGE == HEADER_STAGE) begin 
+        else begin 
             rx_cnt <= rx_cnt + 12'b1;
             if (rx_cnt > header_times) begin 
                 o_data_vld <= 1'b1;

@@ -175,7 +175,7 @@ module ip_rx #(
             o_segment_type      <= 8'b0;
             o_segment_data      <= 4'b0;
         end 
-        else if (CUR_STAGE == HEADER_STAGE) begin 
+        else begin 
             rx_cnt <= rx_cnt + 14'b1;
             if ((rx_cnt > 14'd39) && ~check_failed) begin                    
                 o_new_segment    <= 1'b1;

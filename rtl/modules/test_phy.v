@@ -51,9 +51,9 @@ module test_phy(
             rx_index      <= 0;
             frame_done    <= 0;
         end 
-        else if (frame_done < 3'b100) begin
+        else if (frame_done < 3'b010) begin
             if (frame_done == 3'b000) begin
-                if(rx_index == 32'h000000B2) begin 
+                if(rx_index == 32'h00000084) begin 
                     o_mii_rx_dv   <= 1'b0;
                     o_mii_rx_data <= frame0[rx_index];
                     rx_index      <= 0;
@@ -66,7 +66,7 @@ module test_phy(
                 end 
             end 
             else if (frame_done == 3'b001) begin
-                if (rx_index == 32'h000000B0) begin 
+                if (rx_index == 32'h0000006C) begin 
                     o_mii_rx_dv   <= 1'b0;
                     o_mii_rx_data <= 0;
                     rx_index      <= 0;
@@ -78,32 +78,6 @@ module test_phy(
                     rx_index      <= rx_index + 1;
                 end
             end 
-            else if (frame_done == 3'b010) begin
-                if (rx_index == 32'h000000B0) begin 
-                    o_mii_rx_dv   <= 1'b0;
-                    o_mii_rx_data <= 0;
-                    rx_index      <= 0;
-                    frame_done    <= frame_done + 1;
-                end 
-                else begin 
-                    o_mii_rx_dv   <= 1'b1;
-                    o_mii_rx_data <= frame2[rx_index];
-                    rx_index      <= rx_index + 1;
-                end 
-            end
-            else if (frame_done == 3'b011) begin
-                if (rx_index == 32'h000000AE) begin 
-                    o_mii_rx_dv   <= 1'b0;
-                    o_mii_rx_data <= 0;
-                    rx_index      <= 0;
-                    frame_done    <= frame_done + 1;
-                end 
-                else begin 
-                    o_mii_rx_dv   <= 1'b1;
-                    o_mii_rx_data <= frame3[rx_index];
-                    rx_index      <= rx_index + 1;
-                end 
-            end
         end
         else begin
             o_mii_rx_dv   <= 1'b0;

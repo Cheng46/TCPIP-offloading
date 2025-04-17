@@ -7,9 +7,7 @@ $Description :  In the udp_client module, we receive datagrams from the IP layer
 
 module udp_client #(
     parameter TWSE_IP     = 32'hEA006464,
-    parameter TWSE_PORT   = 16'h2710,         // port 10000
-    parameter NASDAQ_IP   = 32'hE0001701,
-    parameter NASDAQ_PORT = 16'h7531,         // port 30001
+    parameter TWSE_PORT   = 16'h2710,         // udp port 10000
     parameter FPGA_IP     = 32'hC0A80100,
     parameter FPGA_PORT   = 16'h5487
 )(  

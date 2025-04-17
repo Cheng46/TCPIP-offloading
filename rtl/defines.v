@@ -8,7 +8,7 @@
 
 `define ROUTER_MAC          48'h107C4FA2A003     // 亂設的
 `define ROUTER_IP           32'hC0A80106         // 亂設的 192.168.1.6
-`define FPGA_MAC            48'00183E043329     // 亂設的
+`define FPGA_MAC            48'00183E043329      // 亂設的
 `define FPGA_IP             32'hC0A80100         // 亂設的 192.168.1.0
 `define BROADCAST           48'hFFFFFFFFFFFF
 
