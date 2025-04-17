@@ -12,6 +12,10 @@ module fifo_queue #(
     input wire[       DATA_WIDTH-1:0]   i_data,
     
     input wire                          i_fifo_r_en,
+<<<<<<< HEAD
+=======
+    input wire                          i_fifo_r_stop,
+>>>>>>> 51757a0 (WIP: save changes before rebase)
     //input wire[$clog2(FIFO_DEPTH)-1:0]   i_fifo_r_start_line,
     input wire[$clog2(FIFO_DEPTH)-1:0]  i_fifo_r_len,
     output reg                          o_fifo_r_done,
@@ -31,6 +35,7 @@ module fifo_queue #(
     assign o_fifo_full  = ((w_ptr + 1) % FIFO_DEPTH) == r_ptr;
 
     // write to fifo
+<<<<<<< HEAD
     always @(*) begin 
         if (~i_rstn) begin 
             for (i = 0; i < FIFO_DEPTH; i = i + 1) begin 
@@ -39,6 +44,8 @@ module fifo_queue #(
         end
     end 
 
+=======
+>>>>>>> 51757a0 (WIP: save changes before rebase)
     integer i;
     always @(posedge i_rx_clk or negedge i_rstn) begin 
         if (~i_rstn) begin 
@@ -50,7 +57,11 @@ module fifo_queue #(
         end
     end 
 
+<<<<<<< HEAD
     wire [$clog2(FIFO_DEPTH)-1:0] end_line = r_start_ptr + i_fifo_r_len - 1;
+=======
+    wire[$clog2(FIFO_DEPTH)-1:0] end_line = r_start_ptr + i_fifo_r_len - 1;
+>>>>>>> 51757a0 (WIP: save changes before rebase)
     wire[$clog2(FIFO_DEPTH)-1:0] fifo_r_end_line = ((end_line >= r_start_ptr) && ~(end_line >= FIFO_DEPTH))? end_line : (r_start_ptr - 1 - (FIFO_DEPTH - i_fifo_r_len));
     assign                       last_read = r_ptr == fifo_r_end_line;
 
@@ -63,6 +74,7 @@ module fifo_queue #(
             r_ptr         <= 0;
         end 
         else if (i_fifo_r_en && ~o_fifo_empty) begin 
+<<<<<<< HEAD
              if (last_read) begin 
                 o_data        <= fifo_q[r_ptr];
                 o_fifo_r_done <= 1;
@@ -73,6 +85,23 @@ module fifo_queue #(
                 o_fifo_r_done <= 0;
                 r_ptr         <= (r_ptr + 1) % FIFO_DEPTH;
              end 
+=======
+            if (i_fifo_r_stop) begin 
+                o_data        <= {DATA_WIDTH{1'b0}};
+                o_fifo_r_done <= 1'b1;
+                r_ptr         <= (fifo_r_end_line + 1) % FIFO_DEPTH;
+            end 
+            else if (last_read) begin 
+                o_data        <= fifo_q[r_ptr];
+                o_fifo_r_done <= 1;
+                r_ptr         <= (r_ptr + 1) % FIFO_DEPTH;
+            end 
+            else begin
+                o_data        <= fifo_q[r_ptr];
+                o_fifo_r_done <= 0;
+                r_ptr         <= (r_ptr + 1) % FIFO_DEPTH;
+            end 
+>>>>>>> 51757a0 (WIP: save changes before rebase)
         end
         else begin 
             r_start_ptr   <= r_ptr;
