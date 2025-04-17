@@ -25,15 +25,11 @@ module test_phy(
 
     (* verilator public_flat_rw *) reg[3:0]    frame0  [1023:0];
     (* verilator public_flat_rw *) reg[3:0]    frame1  [1023:0];
-    (* verilator public_flat_rw *) reg[3:0]    frame2  [1023:0];
-    (* verilator public_flat_rw *) reg[3:0]    frame3  [1023:0];
 
 
     initial begin
         $readmemh("frame_data0.hex", frame0);
         $readmemh("frame_data1.hex", frame1);
-        $readmemh("frame_data2.hex", frame2);
-        $readmemh("frame_data3.hex", frame3);
     end
 
     integer tx_index = 0;
