@@ -1,7 +1,7 @@
 
 
 module timer#(
-    parameter CNT_NUM   = 37'd1350_0000_0000        // 5 minutes clocks for 450HZ clock rate
+    parameter CNT_NUM   = 16'h34BC                  // 30 seconds clocks for 450HZ clock rate
 )(
     input wire  i_sys_clk,
     input wire  i_rstn,

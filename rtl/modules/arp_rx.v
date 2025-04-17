@@ -1,9 +1,6 @@
 `include "defines.v"
 
-module arp_rx #(
-    parameter FPGA_IP    = 32'hC0A80106,
-    parameter FPGA_MAC   = 48'h00183E043329
-)(
+module arp_rx (
     input wire                          i_sys_clk,
     input wire                          i_rstn,
 
@@ -147,7 +144,7 @@ module arp_rx #(
     // ==============================================================================
     // Receive ARP packet
     wire arp_done;
-    wire my_arp_packet= (hardware_type_latch == 16'd1) && (protocol_type_latch == 16'h0800) && (dest_ip_latch == FPGA_IP);
+    wire my_arp_packet= (hardware_type_latch == 16'd1) && (protocol_type_latch == 16'h0800) && (dest_ip_latch == `FPGA_IP);
     wire arp_request  = gather_done && my_arp_packet && (opcode_latch == 16'd1) && (~arp_done);
     wire arp_reply    = gather_done && my_arp_packet && (opcode_latch == 16'd2) && (~arp_done);
 

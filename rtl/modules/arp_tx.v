@@ -2,9 +2,7 @@
 
 module arp_tx #(
     parameter FPGA_IP    = 32'hC0A80106,
-    parameter FPGA_MAC   = 48'h00183E043329,
-    parameter ROUTER_IP  = 32'hC0A80100,
-    parameter ROUTER_MAC = 48'h107C4FA2A003
+    parameter FPGA_MAC   = 48'h00183E043329
 )(
     input wire                          i_sys_clk,
     input wire                          i_rstn,
@@ -130,10 +128,7 @@ module arp_tx #(
     // ARP Cache
     reg         mac_unkwown;
     reg[31:0]   lookup_ip_latch;
-    wire        arp_cache_w_en = i_rx_new_packet && ((i_receive_ip != ROUTER_IP) || (i_receive_mac != ROUTER_MAC));      // only write back to arp cache only 
-                                                                                                                        // when it's not router's address or 
-                                                                                                                        // router has new address, which is 
-                                                                                                                        // not an usual situation
+
 
     always @(posedge i_sys_clk or negedge i_rstn) begin 
         if (~i_rstn || (CUR_STAGE == IDLE_STAGE)) begin 
@@ -151,13 +146,14 @@ module arp_tx #(
     end 
 
 
-    arp_cache  #(3'b101, 32'hC0A80106, 48'h107C4FA2A003
+    arp_cache  #(
+        .ENTRY_DEPTH        (              5)
     )arp_cache0(
         .i_sys_clk          (      i_sys_clk),
         .i_rstn             (         i_rstn),
         .i_lookup_en        (    i_lookup_en),
         .i_lookup_ip        (    i_lookup_ip),
-        .i_cache_w_en       ( arp_cache_w_en),
+        .i_cache_w_en       (i_rx_new_packet),
         .i_cache_w_ip       (   i_receive_ip),
         .i_cache_w_mac      (  i_receive_mac),
         .o_lookup_done      (  o_lookup_done),

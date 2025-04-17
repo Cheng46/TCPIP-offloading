@@ -3,10 +3,7 @@
 
 /*  mac_rx only received frame from eth_fifo queue only when arp_rx and ip_rx are all clear
 */
-module mac_rx #(
-    parameter ROUTER_MAC = 48'h107C4FA2A003,
-    parameter FPGA_MAC   = 48'h00183E043329
-)(
+module mac_rx (
     input wire                                  i_sys_clk,
     input wire                                  i_rstn,
     input wire                                  i_len_fifo_empty,
@@ -158,7 +155,7 @@ module mac_rx #(
 
     // ==============================================================================
     // Parse data link layer
-    wire my_frame = eth_parse_done && ((dst_mac_latch == FPGA_MAC) || (dst_mac_latch == `BROADCAST));
+    wire my_frame = eth_parse_done && ((dst_mac_latch == `FPGA_MAC) || (dst_mac_latch == `BROADCAST));
 
     always @(posedge i_sys_clk or negedge i_rstn) begin 
         if (~i_rstn || (CUR_STAGE == IDLE_STAGE)) begin 

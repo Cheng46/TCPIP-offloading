@@ -5,9 +5,7 @@
     router don't often change it's MAC address.
 */
 module arp_cache #(
-    parameter ENTRY_DEPTH     = 5,
-    parameter ROUTER_IP       = 32'hC0A80106,
-    parameter ROUTER_MAC      = 48'h107C4FA2A003
+    parameter ENTRY_DEPTH     = 5
 )(
     input wire          i_sys_clk,
     input wire          i_rstn,
@@ -32,9 +30,7 @@ module arp_cache #(
     always @(posedge i_sys_clk or negedge i_rstn) begin 
         if (~i_rstn) begin 
             queue_w_ptr                   <= 3'b0;
-            arp_mac_queue[ENTRY_DEPTH-1]  <= ROUTER_MAC;
-            arp_ip_queue [ENTRY_DEPTH-1]  <= ROUTER_IP;
-            for (a = 0; a < ENTRY_DEPTH-1; a = a + 1) begin 
+            for (a = 0; a < ENTRY_DEPTH; a = a + 1) begin 
                 arp_mac_queue[a]          <= 48'b0;
                 arp_ip_queue [a]          <= 32'b0;
                 //arp_data_valid[a]         <= 1'b0;

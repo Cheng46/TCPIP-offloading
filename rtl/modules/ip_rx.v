@@ -180,7 +180,7 @@ module ip_rx #(
             if ((rx_cnt > 14'd39) && ~check_failed) begin                    
                 o_new_segment    <= 1'b1;
                 o_src_ip         <= src_ip_latch;
-                o_segment_len_b  <= tt_len_latch - ({8'b0, ihl_latch} << 2);
+                o_segment_len_b  <= tt_len_latch - ({12'b0, ihl_latch} << 2);
                 o_segment_type   <= protocol_latch;
                 o_segment_data   <= i_ip_data;
             end 

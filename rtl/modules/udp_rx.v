@@ -1,23 +1,17 @@
 `include "defines.v"
 /******************************************************************************************************************************************************************
-$Description :  In the udp_client module, we receive datagrams from the IP layer and check whether they originate from a registered stock exchange IP and port.
+$Description :  In the udp_rx module, we receive datagrams from the IP layer and check whether they originate from a registered stock exchange IP and port.
                 If the datagram matches, its payload is forwarded to the application layer.
                 To save time and resources, we do not check the checksum in this module.
 ******************************************************************************************************************************************************************/
 
-module udp_client #(
-    parameter TWSE_IP     = 32'hEA006464,
-    parameter TWSE_PORT   = 16'h2710,         // udp port 10000
-    parameter FPGA_IP     = 32'hC0A80100,
-    parameter FPGA_PORT   = 16'h5487
-)(  
+module udp_rx (  
     input wire                          i_sys_clk,
     input wire                          i_rstn,
     input wire                          i_datagram_vld,
     input wire[`MII_DATA_WIDTH-1:0]     i_datagram,
     input wire[               31:0]     i_src_ip,
     
-    output reg[                3:0]     o_app_type,
     output reg                          o_data_vld,
     output reg                          o_drop_datagram,
     output reg[`MII_DATA_WIDTH-1:0]     o_data
@@ -33,8 +27,7 @@ module udp_client #(
     reg[15:0] dst_port_latch;
     reg[11:0] rx_cnt;
 
-    wire header_check_done = ((i_src_ip == TWSE_IP) && (src_port_latch == TWSE_PORT)) || 
-                             ((i_src_ip == NASDAQ_IP) && (src_port_latch == NASDAQ_PORT));
+    wire header_check_done = ((i_src_ip == `TWSE_IP) && (src_port_latch == `TWSE_PRICE_PORT));
 
     always @(posedge i_sys_clk or negedge i_rstn) begin 
         if (~i_rstn) begin 
